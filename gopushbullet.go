@@ -1,4 +1,4 @@
-package gopushbullet
+package pushbullet
 
 import (
 	"bytes"
@@ -12,13 +12,17 @@ import (
 )
 
 //Error (any non-200 error code) contain information on the kind of error that happened.
-type Error struct {
-	ErrorBody struct {
+type (
+	Error struct {
+		ErrorBody errorBody `json:"error"`
+	}
+
+	errorBody struct {
 		Message string `json:"message"`
 		Type    string `json:"type"`
 		Cat     string `json:"cat"`
-	} `json:"error"`
-}
+	}
+)
 
 func (e *Error) String() string {
 	var t string
@@ -27,7 +31,7 @@ func (e *Error) String() string {
 	} else {
 		t = "Server Error"
 	}
-	return fmt.Sprintf("%v: %v", e.ErrorBody.Message, t)
+	return fmt.Sprintf("%v: %v", t, e.ErrorBody.Message)
 }
 
 //PushMessage describes a message to be sent via PushBullet. Only one of the first 4 properties may be specified with a message being sent.
@@ -155,10 +159,13 @@ func (c *Client) makeCall(method string, call string, data interface{}) (respons
 		return responseBody, apiError, errors.New("Error: API key required.")
 	}
 
+	var payload []byte
 	// create the payload
-	payload, err := json.Marshal(data)
-	if err != nil {
-		return responseBody, apiError, err
+	if data != nil {
+		payload, err = json.Marshal(data)
+		if err != nil {
+			return responseBody, apiError, err
+		}
 	}
 
 	// make the call
