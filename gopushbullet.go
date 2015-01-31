@@ -7,11 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
-//ErrorResponse (any non-200 error code) contain information on the kind of error that happened.
-type ErrorResponse struct {
+//Error (any non-200 error code) contain information on the kind of error that happened.
+type Error struct {
 	ErrorBody struct {
 		Message string `json:"message"`
 		Type    string `json:"type"`
@@ -19,7 +20,7 @@ type ErrorResponse struct {
 	} `json:"error"`
 }
 
-func (e ErrorResponse) Error() string {
+func (e *Error) String() string {
 	var t string
 	if e.ErrorBody.Type == "invalid_request" {
 		t = "Invalid Request"
@@ -120,14 +121,25 @@ type Preferences struct {
 
 const baseURL = "https://api.pushbullet.com/v2/"
 
-//GetUser gets the current authenticate users details.
-func GetUser(key string) (User, error) {
-	var u User
-	if len(key) == 0 {
-		return u, errors.New("Error: API key required.")
+//Client a Pushbullet API client
+type Client struct {
+	APIKey     string
+	HTTPClient *http.Client
+}
+
+//ClientWithKey returns a pushbullet.CLient pointer with API key
+func ClientWithKey(key string) *Client {
+	return &Client{
+		APIKey:     key,
+		HTTPClient: &http.Client{},
 	}
-	r, err := makeCall(key, "GET", "users/me", nil)
+}
+
+//GetUser gets the current authenticate users details.
+func (c *Client) GetUser() (u User, err error) {
+	r, apiError, err := c.makeCall("GET", "users/me", nil)
 	if err != nil {
+		log.Println("Failed to get user:", err, apiError.String())
 		return u, err
 	}
 	err = json.Unmarshal(r, &u)
@@ -137,33 +149,46 @@ func GetUser(key string) (User, error) {
 	return u, nil
 }
 
-func makeCall(key string, method string, call string, body []byte) ([]byte, error) {
-	client := &http.Client{}
-	r, err := http.NewRequest(method, baseURL+call, bytes.NewBuffer(body))
-	if err != nil {
-		panic(err)
-	}
-	r.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(key+":")))
-	r.Header.Add("Content-Type", "application/json")
-	s, err := client.Do(r)
-	if err != nil {
-		panic(err)
-	}
-	defer s.Body.Close()
-
-	body, err = ioutil.ReadAll(s.Body)
-	if err != nil {
-		return nil, err
+func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
+	// make sure API key seems ok
+	if len(c.APIKey) == 0 {
+		return responseBody, apiError, errors.New("Error: API key required.")
 	}
 
-	if s.StatusCode != http.StatusOK {
-		var errResponse ErrorResponse
-		err = json.Unmarshal(body, &errResponse)
+	// create the payload
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return responseBody, apiError, err
+	}
+
+	// make the call
+	req, err := http.NewRequest(method, baseURL+call, bytes.NewBuffer(payload))
+	if err != nil {
+		return responseBody, apiError, err
+	}
+	req.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(c.APIKey+":")))
+	req.Header.Add("Content-Type", "application/json")
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return responseBody, apiError, err
+	}
+	defer res.Body.Close()
+
+	// read the response
+	responseBody, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		return responseBody, apiError, err
+	}
+
+	// if the response was an error message
+	if res.StatusCode != http.StatusOK {
+		apiError = &Error{}
+		err = json.Unmarshal(responseBody, &apiError)
 		if err != nil {
-			panic(err)
+			return responseBody, apiError, err
 		}
-		return body, &errResponse
+		return responseBody, apiError, fmt.Errorf("Status code: %v", res.StatusCode)
 	}
 
-	return body, nil
+	return responseBody, apiError, err
 }
