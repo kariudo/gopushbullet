@@ -1,6 +1,6 @@
 package gopushbullet
 
-// ErrorResponse (any non-200 error code) contain information on the kind of error that happened.
+//ErrorResponse (any non-200 error code) contain information on the kind of error that happened.
 type ErrorResponse struct {
 	Error struct {
 		Message string `json:"message"`
@@ -9,7 +9,7 @@ type ErrorResponse struct {
 	} `json:"error"`
 }
 
-// PushMessage describes a message to be sent via PushBullet. Only one of the first 4 properties may be specified with a message being sent.
+//PushMessage describes a message to be sent via PushBullet. Only one of the first 4 properties may be specified with a message being sent.
 type PushMessage struct {
 	DeviceIdentity string `json:"device_iden"`
 	Email          string `json:"email"`
@@ -28,4 +28,20 @@ type PushMessage struct {
 	FileType             string `json:"file_type"` // MIME type of the file
 	FileURL              string `json:"file_url"`
 	SourceDeviceIdentity string `json:"source_device_iden"`
+}
+
+//Device describes a registered device (phone, stream)
+type Device struct {
+	Identity     string  `json:"iden"`
+	PushToken    string  `json:"push_token"`
+	AppVersion   int     `json:"app_version"`
+	Fingerprint  string  `json:"fingerprint"`
+	Active       bool    `json:"active"`
+	Nickname     string  `json:"nickname"`
+	Manufacturer string  `json:"manufacturer"`
+	Type         string  `json:"type"`
+	Created      float32 `json:"created"`
+	Modified     float32 `json:"modified"`
+	Model        string  `json:"model"`
+	Pushable     bool    `json:"pushable"`
 }
