@@ -74,3 +74,23 @@ type Channel struct {
 	Description string `json:"description"`
 	ImageURL    string `json:"image_url"`
 }
+
+//User describes the authenticated user.
+type User struct {
+	ID              string  `json:"iden"`
+	Email           string  `json:"email"`
+	EmailNormalized string  `json:"email_normalized"`
+	Created         float32 `json:"created"`
+	Modified        float32 `json:"modified"`
+	Name            string  `json:"name"`
+	ImageURL        string  `json:"image_url"`
+	Preferences     struct {
+		Onboarding struct {
+			App       bool `json:"app"`
+			Friends   bool `json:"friends"`
+			Extension bool `json:"extension"`
+		} `json:"onboarding"`
+		Social bool   `json:"social"`
+		Cat    string `json:"cat"`
+	} `json:"preferences"`
+}
