@@ -5,5 +5,19 @@
 
 A complete go package for interacting with the fantastic Pushbullet service.
 
-### Status:
+## Status
 primary feature development still in progress...
+
+### Done :
+* Get User
+* Pushes
+ * Note
+
+### Todo :
+* Set User preferences
+* Pushes
+ * ~~Note~~
+ * Link
+ * Address
+ * Checklist
+ * File

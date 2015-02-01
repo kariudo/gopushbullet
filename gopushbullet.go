@@ -123,18 +123,18 @@ type Preferences struct {
 	Cat    string `json:"cat"`
 }
 
-const baseURL = "https://api.pushbullet.com/v2/"
-
 //Client a Pushbullet API client
 type Client struct {
 	APIKey     string
+	BaseURL    string
 	HTTPClient *http.Client
 }
 
-//ClientWithKey returns a pushbullet.CLient pointer with API key
+//ClientWithKey returns a pushbullet.CLient pointer with API key.
 func ClientWithKey(key string) *Client {
 	return &Client{
 		APIKey:     key,
+		BaseURL:    "https://api.pushbullet.com/v2/",
 		HTTPClient: &http.Client{},
 	}
 }
@@ -153,6 +153,43 @@ func (c *Client) GetUser() (u User, err error) {
 	return u, nil
 }
 
+//SendNote simply sends a note type push to all of the users devices
+func (c *Client) SendNote(title, body string) error {
+	err := c.SendNoteToTarget("all", "", title, body)
+	return err
+}
+
+//SendNoteToTarget sends a note type push to a specific device.
+func (c *Client) SendNoteToTarget(targetType, target, title, body string) error {
+	var p = PushMessage{
+		Type:  "note",
+		Title: title,
+		Body:  body,
+	}
+	switch targetType {
+	case "device":
+		p.DeviceID = target
+	case "email":
+		p.Email = target
+	case "channel":
+		p.ChannelTag = target
+	case "client":
+		p.ClientID = target
+	default:
+		// only remaining acceptable type is "all" which takes no addtional fields
+		if targetType != "all" {
+			return errors.New("Invalid target type")
+		}
+	}
+
+	_, apiError, err := c.makeCall("POST", "pushes", p)
+	if err != nil {
+		log.Println("Failed to get user:", err, apiError.String())
+		return err
+	}
+	return nil
+}
+
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems ok
 	if len(c.APIKey) == 0 {
@@ -169,7 +206,7 @@ func (c *Client) makeCall(method string, call string, data interface{}) (respons
 	}
 
 	// make the call
-	req, err := http.NewRequest(method, baseURL+call, bytes.NewBuffer(payload))
+	req, err := http.NewRequest(method, c.BaseURL+call, bytes.NewBuffer(payload))
 	if err != nil {
 		return responseBody, apiError, err
 	}
