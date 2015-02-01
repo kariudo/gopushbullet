@@ -12,12 +12,15 @@ primary feature development still in progress...
 * Get User
 * Pushes
  * Note
+ * Link
+ * Address
+ * Checklist
 
 ### Todo :
 * Set User preferences
 * Pushes
  * ~~Note~~
- * Link
- * Address
- * Checklist
+ * ~~Link~~
+ * ~~Address~~
+ * ~~Checklist~~
  * File
