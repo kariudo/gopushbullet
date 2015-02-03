@@ -6,7 +6,7 @@
 A complete go package for interacting with the fantastic Pushbullet service.
 
 ## Status
-primary feature development still in progress...
+primary feature development still in progress, see below for current status:
 
 ### Done :
 * Get User
@@ -15,12 +15,13 @@ primary feature development still in progress...
  * Link
  * Address
  * Checklist
+ * File
 
 ### Todo :
 * Set User preferences
-* Pushes
- * ~~Note~~
- * ~~Link~~
- * ~~Address~~
- * ~~Checklist~~
- * File
+* Devices
+* Contacts
+* Subscriptions
+* Web Sockets
+* Upload Requests (upload files)
+* OAuth account access

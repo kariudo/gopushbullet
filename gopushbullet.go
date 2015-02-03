@@ -200,7 +200,7 @@ func (c *Client) SendLink(title, body, url string) error {
 //SendLinkToTarget sends a link type push to a specific device.
 func (c *Client) SendLinkToTarget(targetType, target, title, body, url string) error {
 	var p = PushMessage{
-		Type:  "note",
+		Type:  "link",
 		Title: title,
 		Body:  body,
 		URL:   url,
@@ -238,7 +238,7 @@ func (c *Client) SendAddress(title, name, address string) error {
 //SendAddressToTarget sends an address type push to a specific device.
 func (c *Client) SendAddressToTarget(targetType, target, title, name, address string) error {
 	var p = PushMessage{
-		Type:    "note",
+		Type:    "address",
 		Title:   title,
 		Name:    name,
 		Address: address,
@@ -276,7 +276,7 @@ func (c *Client) SendChecklist(title string, items []string) error {
 //SendChecklistToTarget sends a checklist type push to a specific device.
 func (c *Client) SendChecklistToTarget(targetType, target, title string, items []string) error {
 	var p = PushMessage{
-		Type:  "note",
+		Type:  "checklist",
 		Title: title,
 		Items: items,
 	}
@@ -299,6 +299,45 @@ func (c *Client) SendChecklistToTarget(targetType, target, title string, items [
 	_, apiError, err := c.makeCall("POST", "pushes", p)
 	if err != nil {
 		log.Println("Failed to send checklist:", err, apiError.String())
+		return err
+	}
+	return nil
+}
+
+//SendFile simply sends a file type push to all of the users devices
+func (c *Client) SendFile(title string, items []string) error {
+	err := c.SendChecklistToTarget("all", "", title, items)
+	return err
+}
+
+//SendFileToTarget sends a file type push to a specific device.
+func (c *Client) SendFileToTarget(targetType, target, fileName, fileType, fileURL, body string, items []string) error {
+	var p = PushMessage{
+		Type:     "file",
+		FileName: fileName,
+		FileType: fileType,
+		FileURL:  fileURL,
+		Body:     body,
+	}
+	switch targetType {
+	case "device":
+		p.DeviceID = target
+	case "email":
+		p.Email = target
+	case "channel":
+		p.ChannelTag = target
+	case "client":
+		p.ClientID = target
+	default:
+		// only remaining acceptable type is "all" which takes no addtional fields
+		if targetType != "all" {
+			return errors.New("Invalid target type")
+		}
+	}
+
+	_, apiError, err := c.makeCall("POST", "pushes", p)
+	if err != nil {
+		log.Println("Failed to send file:", err, apiError.String())
 		return err
 	}
 	return nil
