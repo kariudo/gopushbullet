@@ -72,6 +72,11 @@ type Device struct {
 	Pushable     bool    `json:"pushable"`
 }
 
+//DeviceList describes an array of devices
+type DeviceList struct {
+	Devices []Device `json:"devices"`
+}
+
 //Contact describes a contact entry.
 type Contact struct {
 	ID              string  `json:"iden"`
@@ -337,10 +342,25 @@ func (c *Client) SendFileToTarget(targetType, target, fileName, fileType, fileUR
 
 	_, apiError, err := c.makeCall("POST", "pushes", p)
 	if err != nil {
-		log.Println("Failed to send file:", err, apiError.String())
+		log.Println("Failed to send file: ", err, apiError.String())
 		return err
 	}
 	return nil
+}
+
+//GetDevices obtains a list of registered devices from Pushbullet
+func (c *Client) GetDevices() (DeviceList, error) {
+	var d DeviceList
+	res, apiError, err := c.makeCall("GET", "devices", nil)
+	if err != nil {
+		log.Println("Failed to get devices: ", err, apiError.String())
+		return d, err
+	}
+	err = json.Unmarshal(res, &d)
+	if err != nil {
+		return d, err
+	}
+	return d, nil
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {

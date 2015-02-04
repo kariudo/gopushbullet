@@ -10,16 +10,16 @@ primary feature development still in progress, see below for current status:
 
 ### Done :
 * Get User
-* Pushes
+* Send Pushes
  * Note
  * Link
  * Address
  * Checklist
  * File
+* Get Devices
 
 ### Todo :
 * Set User preferences
-* Devices
 * Contacts
 * Subscriptions
 * Web Sockets

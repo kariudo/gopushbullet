@@ -82,7 +82,7 @@ func TestSendNoteToAll(t *testing.T) {
 	// 	t.Fatal(err)
 	// }
 	//c := ClientWithKey(k)
-	mockServer, c := mockHTTP(200, "")
+	mockServer, c := mockHTTP(200, "{}")
 	defer mockServer.Close()
 
 	err := c.SendNote("Build Test", "This is a test of gopushbullet's SendNote() function.")
@@ -137,7 +137,7 @@ func TestSendNoteToChannel(t *testing.T) {
 }
 
 func TestSendNoteToEmail(t *testing.T) {
-	mockServer, c := mockHTTP(200, "")
+	mockServer, c := mockHTTP(200, "{}")
 	defer mockServer.Close()
 
 	err := c.SendNoteToTarget("email", "kariudo@gmail.com", "Build Test", "This is a test of gopushbullet.")
@@ -147,11 +147,24 @@ func TestSendNoteToEmail(t *testing.T) {
 }
 
 func TestSendNoteToClientID(t *testing.T) {
-	mockServer, c := mockHTTP(200, "")
+	mockServer, c := mockHTTP(200, "{}")
 	defer mockServer.Close()
 
 	err := c.SendNoteToTarget("client", "_clientid_", "Build Test", "This is a test of gopushbullet's SendNote() function.")
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestGetDevices(t *testing.T) {
+	k, err := getKey()
+	if err != nil {
+		t.Error("Failed to get key")
+	}
+	c := ClientWithKey(k)
+	d, err := c.GetDevices()
+	if err != nil {
+		t.Error("Failed to get devices: ", err)
+	}
+	fmt.Println(d)
 }
