@@ -20,6 +20,7 @@ primary feature development still in progress, see below for current status:
 * Get Contacts
 
 ### Todo :
+* Create Contacts
 * Set User preferences
 * Subscriptions
 * Web Sockets

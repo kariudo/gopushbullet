@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 )
 
 //Error (any non-200 error code) contain information on the kind of error that happened.
@@ -381,6 +382,18 @@ func (c *Client) GetContacts() (ContactList, error) {
 		return l, err
 	}
 	return l, err
+}
+
+//CreateContact creates a new contact with the specified name and email
+func (c *Client) CreateContact(name, email string) error {
+	u := url.Values{}
+	u.Add("name", name)
+	u.Add("email", email)
+	_, err := c.HTTPClient.PostForm(c.BaseURL+"contacts", u)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
