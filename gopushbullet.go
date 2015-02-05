@@ -88,6 +88,11 @@ type Contact struct {
 	Active          bool    `json:"active"`
 }
 
+//ContactList describes an array of contacts
+type ContactList struct {
+	Contacts []Contact `json:"contacts"`
+}
+
 //Subscription describes a channel subscription.
 type Subscription struct {
 	ID       string  `json:"iden"`
@@ -361,6 +366,21 @@ func (c *Client) GetDevices() (DeviceList, error) {
 		return d, err
 	}
 	return d, nil
+}
+
+//GetContacts obtains a list of your contacts
+func (c *Client) GetContacts() (ContactList, error) {
+	var l ContactList
+	res, apiError, err := c.makeCall("GET", "contacts", nil)
+	if err != nil {
+		log.Println("Failed to get contacts: ", err, apiError.String())
+		return l, err
+	}
+	err = json.Unmarshal(res, &l)
+	if err != nil {
+		return l, err
+	}
+	return l, err
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {

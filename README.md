@@ -17,10 +17,10 @@ primary feature development still in progress, see below for current status:
  * Checklist
  * File
 * Get Devices
+* Get Contacts
 
 ### Todo :
 * Set User preferences
-* Contacts
 * Subscriptions
 * Web Sockets
 * Upload Requests (upload files)
