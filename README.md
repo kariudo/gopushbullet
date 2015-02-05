@@ -18,9 +18,10 @@ primary feature development still in progress, see below for current status:
  * File
 * Get Devices
 * Get Contacts
+* Create Contacts
 
 ### Todo :
-* Create Contacts
+* Update Contact
 * Set User preferences
 * Subscriptions
 * Web Sockets
