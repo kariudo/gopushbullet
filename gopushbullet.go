@@ -417,6 +417,16 @@ func (c *Client) DeleteContact(contactID string) error {
 	return nil
 }
 
+//SubscribeChannel subscribes use to a specified channel
+func (c *Client) SubscribeChannel(channel string) error {
+	_, apiError, err := c.makeCall("POST", "subscriptions", nil)
+	if err != nil {
+		log.Println("Failed to add subscription: ", err, apiError.String())
+		return err
+	}
+	return nil
+}
+
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems ok
 	if len(c.APIKey) == 0 {
