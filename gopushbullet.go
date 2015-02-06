@@ -6,10 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 //Error (any non-200 error code) contain information on the kind of error that happened.
@@ -138,6 +141,22 @@ type Preferences struct {
 	} `json:"onboarding"`
 	Social bool   `json:"social"`
 	Cat    string `json:"cat"`
+}
+
+//Authorization describes a file upload authorization.
+type Authorization struct {
+	FileType  string `json:"file_type"`
+	FileName  string `json:"file_name"`
+	FileURL   string `json:"file_url"`
+	UploadURL string `json:"upload_url"`
+	Data      struct {
+		Awsaccesskeyid string `json:"awsaccesskeyid"`
+		Acl            string `json:"acl"`
+		Key            string `json:"key"`
+		Signature      string `json:"signature"`
+		Policy         string `json:"policy"`
+		ContentType    string `json:"content-type"`
+	} `json:"data"`
 }
 
 //Client a Pushbullet API client
@@ -467,6 +486,28 @@ func (c *Client) ChannelInfo(channelTag string) (channel Channel, err error) {
 	return
 }
 
+//AuthorizeUpload requests an authorization to upload a file
+func (c *Client) AuthorizeUpload(fileName, fileType string) (Authorization, error) {
+	var auth Authorization
+	u := url.Values{}
+	u.Add("file_name", fileName)
+	u.Add("file_type", fileType)
+	response, err := c.HTTPClient.PostForm(c.BaseURL+"upload-request", u)
+	if err != nil {
+		return auth, err
+	}
+	// read the response
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return auth, err
+	}
+	err = json.Unmarshal(body, &auth)
+	if err != nil {
+		return auth, err
+	}
+	return auth, nil
+}
+
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems ok
 	if len(c.APIKey) == 0 {
@@ -512,4 +553,79 @@ func (c *Client) makeCall(method string, call string, data interface{}) (respons
 	}
 
 	return responseBody, apiError, err
+}
+
+func uploadFileByPath(authorization Authorization, file string) (err error) {
+	var b bytes.Buffer
+	w := multipart.NewWriter(&b)
+	// Add file
+	f, err := os.Open(file)
+	if err != nil {
+		return
+	}
+	fw, err := w.CreateFormFile("file", file)
+	if err != nil {
+		return
+	}
+	if _, err = io.Copy(fw, f); err != nil {
+		return
+	}
+	// Add the other fields
+	if fw, err = w.CreateFormField("awsaccesskeyid"); err != nil {
+		return
+	}
+	if _, err = fw.Write([]byte(authorization.Data.Awsaccesskeyid)); err != nil {
+		return
+	}
+	if fw, err = w.CreateFormField("acl"); err != nil {
+		return
+	}
+	if _, err = fw.Write([]byte(authorization.Data.Acl)); err != nil {
+		return
+	}
+	if fw, err = w.CreateFormField("key"); err != nil {
+		return
+	}
+	if _, err = fw.Write([]byte(authorization.Data.Key)); err != nil {
+		return
+	}
+	if fw, err = w.CreateFormField("signature"); err != nil {
+		return
+	}
+	if _, err = fw.Write([]byte(authorization.Data.Signature)); err != nil {
+		return
+	}
+	if fw, err = w.CreateFormField("policy"); err != nil {
+		return
+	}
+	if _, err = fw.Write([]byte(authorization.Data.Policy)); err != nil {
+		return
+	}
+	if fw, err = w.CreateFormField("content-type"); err != nil {
+		return
+	}
+	if _, err = fw.Write([]byte(authorization.Data.ContentType)); err != nil {
+		return
+	}
+	w.Close()
+
+	req, err := http.NewRequest("POST", authorization.UploadURL, &b)
+	if err != nil {
+		return
+	}
+	req.Header.Set("Content-Type", w.FormDataContentType())
+
+	// Submit the request
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return
+	}
+
+	// Check the response
+	if res.StatusCode >= 300 {
+		err = fmt.Errorf("Bad Status Result: %s", res.Status)
+	}
+
+	return err
 }
