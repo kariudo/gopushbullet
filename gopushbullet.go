@@ -446,7 +446,7 @@ func (c *Client) ListSubscriptions() (subscriptions SubscriptionList, err error)
 	return
 }
 
-//UnsubscribeChannel unsubscibes from the specified channel
+//UnsubscribeChannel unsubscribes from the specified channel
 func (c *Client) UnsubscribeChannel(channelID string) error {
 	_, apiError, err := c.makeCall("DELETE", "subscriptions/"+channelID, nil)
 	if err != nil {
@@ -454,6 +454,17 @@ func (c *Client) UnsubscribeChannel(channelID string) error {
 		return err
 	}
 	return nil
+}
+
+//ChannelInfo gets detained info for the requested channel
+func (c *Client) ChannelInfo(channelTag string) (channel Channel, err error) {
+	response, apiError, err := c.makeCall("GET", "channel-info?tag="+channelTag, nil)
+	if err != nil {
+		log.Println("Failed to get channel info: ", err, apiError.String())
+		return
+	}
+	err = json.Unmarshal(response, &channel)
+	return
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
