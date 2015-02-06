@@ -21,10 +21,10 @@ primary feature development still in progress, see below for current status:
 * Create Contacts
 * Update Contact
 * Delete Contact
+* Subscriptions (add, info, remove)
 
 ### Todo :
 * Set User preferences
-* Subscriptions
 * Web Sockets
 * Upload Requests (upload files)
 * OAuth account access
