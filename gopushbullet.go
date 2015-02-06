@@ -446,6 +446,16 @@ func (c *Client) ListSubscriptions() (subscriptions SubscriptionList, err error)
 	return
 }
 
+//UnsubscribeChannel unsubscibes from the specified channel
+func (c *Client) UnsubscribeChannel(channelID string) error {
+	_, apiError, err := c.makeCall("DELETE", "subscriptions/"+channelID, nil)
+	if err != nil {
+		log.Println("Failed to unsubscribe channel: ", err, apiError.String())
+		return err
+	}
+	return nil
+}
+
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems ok
 	if len(c.APIKey) == 0 {
