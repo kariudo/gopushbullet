@@ -103,6 +103,11 @@ type Subscription struct {
 	Channel  Channel `json:"channel"`
 }
 
+//SubscriptionList describes a list of subscribed channels
+type SubscriptionList struct {
+	Subscriptions []Subscription `json:"subscriptions"`
+}
+
 //Channel describes a channel on a subscription.
 type Channel struct {
 	ID          string `json:"iden"`
@@ -425,6 +430,20 @@ func (c *Client) SubscribeChannel(channel string) error {
 		return err
 	}
 	return nil
+}
+
+//ListSubscriptions returns a list of channels to which the user is subscribed
+func (c *Client) ListSubscriptions() (subscriptions SubscriptionList, err error) {
+	responseBody, apiError, err := c.makeCall("GET", "subscriptions", nil)
+	if err != nil {
+		log.Println("Failed to add subscription: ", err, apiError.String())
+		return
+	}
+	err = json.Unmarshal(responseBody, &subscriptions)
+	if err != nil {
+		return
+	}
+	return
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
