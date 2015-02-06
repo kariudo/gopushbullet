@@ -16,6 +16,7 @@ primary feature development still in progress, see below for current status:
  * Address
  * Checklist
  * File
+   * File Uploads
 * Get Devices
 * Get Contacts
 * Create Contacts
