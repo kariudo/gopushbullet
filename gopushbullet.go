@@ -396,6 +396,27 @@ func (c *Client) CreateContact(name, email string) error {
 	return nil
 }
 
+//UpdateContact creates a new contact with the specified name and email
+func (c *Client) UpdateContact(contactID, name string) error {
+	u := url.Values{}
+	u.Add("name", name)
+	_, err := c.HTTPClient.PostForm(c.BaseURL+"contacts/"+contactID, u)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//DeleteContact creates a new contact with the specified name and email
+func (c *Client) DeleteContact(contactID string) error {
+	_, apiError, err := c.makeCall("DELETE", "contacts/"+contactID, nil)
+	if err != nil {
+		log.Println("Failed to delete contact: ", err, apiError.String())
+		return err
+	}
+	return nil
+}
+
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems ok
 	if len(c.APIKey) == 0 {
