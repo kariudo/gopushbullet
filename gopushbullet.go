@@ -38,7 +38,7 @@ func (e *Error) String() string {
 	return fmt.Sprintf("%v: %v", t, e.ErrorBody.Message)
 }
 
-//PushMessage describes a message to be sent via PushBullet. Only one of the first 4 properties may be specified with a message being sent.
+//PushMessage describes a message to be sent via Pushbullet. Only one of the first 4 properties may be specified with a message being sent.
 type PushMessage struct {
 	DeviceID   string `json:"device_iden"`
 	Email      string `json:"email"`
@@ -47,7 +47,7 @@ type PushMessage struct {
 
 	// Type indicates the type of push message being sent
 	Type    string   `json:"type"`    // note, link, address, checklist, or file
-	Title   string   `json:"title"`   // Title is used withn note, link, and checklist types
+	Title   string   `json:"title"`   // Title is used within note, link, and checklist types
 	Body    string   `json:"body"`    // Body is used with link, note, or file types
 	URL     string   `json:"url"`     // URL is used for link types
 	Name    string   `json:"name"`    // Name of place used with address type
@@ -132,7 +132,7 @@ type User struct {
 	Preferences     Preferences `json:"preferences"`
 }
 
-//Preferences describes a set of user perferences.
+//Preferences describes a set of user preferences.
 type Preferences struct {
 	Onboarding struct {
 		App       bool `json:"app"`
@@ -166,7 +166,7 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-//ClientWithKey returns a pushbullet.CLient pointer with API key.
+//ClientWithKey returns a pushbullet.Client pointer with API key.
 func ClientWithKey(key string) *Client {
 	return &Client{
 		APIKey:     key,
@@ -212,7 +212,7 @@ func (c *Client) SendNoteToTarget(targetType, target, title, body string) error 
 	case "client":
 		p.ClientID = target
 	default:
-		// only remaining acceptable type is "all" which takes no addtional fields
+		// only remaining acceptable type is "all" which takes no additional fields
 		if targetType != "all" {
 			return errors.New("Invalid target type")
 		}
@@ -250,7 +250,7 @@ func (c *Client) SendLinkToTarget(targetType, target, title, body, url string) e
 	case "client":
 		p.ClientID = target
 	default:
-		// only remaining acceptable type is "all" which takes no addtional fields
+		// only remaining acceptable type is "all" which takes no additional fields
 		if targetType != "all" {
 			return errors.New("Invalid target type")
 		}
@@ -288,7 +288,7 @@ func (c *Client) SendAddressToTarget(targetType, target, title, name, address st
 	case "client":
 		p.ClientID = target
 	default:
-		// only remaining acceptable type is "all" which takes no addtional fields
+		// only remaining acceptable type is "all" which takes no additional fields
 		if targetType != "all" {
 			return errors.New("Invalid target type")
 		}
@@ -325,7 +325,7 @@ func (c *Client) SendChecklistToTarget(targetType, target, title string, items [
 	case "client":
 		p.ClientID = target
 	default:
-		// only remaining acceptable type is "all" which takes no addtional fields
+		// only remaining acceptable type is "all" which takes no additional fields
 		if targetType != "all" {
 			return errors.New("Invalid target type")
 		}
@@ -364,7 +364,7 @@ func (c *Client) SendFileToTarget(targetType, target, fileName, fileType, fileUR
 	case "client":
 		p.ClientID = target
 	default:
-		// only remaining acceptable type is "all" which takes no addtional fields
+		// only remaining acceptable type is "all" which takes no additional fields
 		if targetType != "all" {
 			return errors.New("Invalid target type")
 		}
@@ -519,7 +519,7 @@ func (c *Client) UpdatePreferences(preferences Preferences) error {
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
-	// make sure API key seems ok
+	// make sure API key seems OK
 	if len(c.APIKey) == 0 {
 		return responseBody, apiError, errors.New("Error: API key required.")
 	}
