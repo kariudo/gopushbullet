@@ -6,11 +6,15 @@
 A complete go package for interacting with the fantastic Pushbullet service.
 
 ## Status
-Major features all complete. Additional tests need to be written and a couple less common features. Also need some example code for the test file.
+Many major features complete, see notes below. Additional tests need to be written and a couple less common features. Also need some example code for the test file.
 
-### Done :
+## Features
+
+### Users
 * Get User
 * Set User preferences
+
+### Pushes
 * Send Pushes
  * Note
  * Link
@@ -18,13 +22,24 @@ Major features all complete. Additional tests need to be written and a couple le
  * Checklist
  * File
    * File Uploads
+
+### Devices
 * Get Devices
+
+### Contacts
 * Get Contacts
 * Create Contacts
 * Update Contact
 * Delete Contact
-* Subscriptions (add, info, remove)
 
-### Todo :
+### Channels
+* Subscribe
+* Unsubscribe
+* Get channel info
+
+## Todo
 * Web Sockets
 * OAuth account access
+* Get push history
+* Update a push (dismiss & update list items)
+* Delete a push
