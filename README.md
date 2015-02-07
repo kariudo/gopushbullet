@@ -27,5 +27,4 @@ primary feature development still in progress, see below for current status:
 ### Todo :
 * Set User preferences
 * Web Sockets
-* Upload Requests (upload files)
 * OAuth account access
