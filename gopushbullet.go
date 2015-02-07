@@ -508,6 +508,16 @@ func (c *Client) AuthorizeUpload(fileName, fileType string) (Authorization, erro
 	return auth, nil
 }
 
+//UpdatePreferences overwrites user preferences with specified ones
+func (c *Client) UpdatePreferences(preferences Preferences) error {
+	_, apiError, err := c.makeCall("POST", "users/me", preferences)
+	if err != nil {
+		log.Println("Failed to update preferences: ", apiError, err)
+		return err
+	}
+	return err
+}
+
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems ok
 	if len(c.APIKey) == 0 {
