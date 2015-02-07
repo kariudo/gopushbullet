@@ -6,7 +6,7 @@
 A complete go package for interacting with the fantastic Pushbullet service.
 
 ## Status
-Major features all complete. Additional tests need to be written and a couple less common features.
+Major features all complete. Additional tests need to be written and a couple less common features. Also need some example code for the test file.
 
 ### Done :
 * Get User
