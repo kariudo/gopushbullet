@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 )
 
 //Error (any non-200 error code) contain information on the kind of error that happened.
@@ -530,9 +531,9 @@ func (c *Client) UpdatePreferences(preferences Preferences) error {
 }
 
 //GetPushHistory gets pushes modified after the provided timestamp
-func GetPushHistory(modifiedAfter float32) ([]PushMessage, error) {
+func (c *Client) GetPushHistory(modifiedAfter float32) ([]PushMessage, error) {
 	var pushList PushList
-	responseBody, apiError, err := c.makeCall("GET", "pushes?modified_after="+modifiedAfter, nil)
+	responseBody, apiError, err := c.makeCall("GET", "pushes?modified_after="+strconv.FormatFloat(float64(modifiedAfter), 'f', 4, 32), nil)
 	if err != nil {
 		log.Println("Error getting push history: ", apiError, err)
 		return pushList.Pushes, err
