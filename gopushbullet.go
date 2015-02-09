@@ -40,6 +40,9 @@ func (e *Error) String() string {
 
 //PushMessage describes a message to be sent via Pushbullet. Only one of the first 4 properties may be specified with a message being sent.
 type PushMessage struct {
+	ID string `json:"`
+
+	// Target specific properties
 	DeviceID   string `json:"device_iden"`
 	Email      string `json:"email"`
 	ChannelTag string `json:"channel_tag"`
@@ -58,6 +61,14 @@ type PushMessage struct {
 	FileType       string `json:"file_type"` // MIME type of the file
 	FileURL        string `json:"file_url"`
 	SourceDeviceID string `json:"source_device_iden"`
+
+	// Properties for response messages
+	// TODO add these properties
+}
+
+//PushList describes a list of push messages
+type PushList struct {
+	Pushes []PushMessage `json:"pushes"`
 }
 
 //Device describes a registered device (phone, stream).
@@ -516,6 +527,21 @@ func (c *Client) UpdatePreferences(preferences Preferences) error {
 		return err
 	}
 	return err
+}
+
+//GetPushHistory gets pushes modified after the provided timestamp
+func GetPushHistory(modifiedAfter float32) ([]PushMessage, error) {
+	var pushList PushList
+	responseBody, apiError, err := c.makeCall("GET", "pushes?modified_after="+modifiedAfter, nil)
+	if err != nil {
+		log.Println("Error getting push history: ", apiError, err)
+		return pushList.Pushes, err
+	}
+	err = json.Unmarshal(responseBody, &pushList)
+	if err != nil {
+		return pushList.Pushes, err
+	}
+	return pushList.Pushes, nil
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
