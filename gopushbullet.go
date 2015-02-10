@@ -64,7 +64,16 @@ type PushMessage struct {
 	SourceDeviceID string `json:"source_device_iden"`
 
 	// Properties for response messages
-	// TODO add these properties
+	Created                 float32 `json:"created"`
+	Modified                float32 `json:"modified"`
+	Active                  bool    `json:"active"`
+	Dismissed               bool    `json:"dismissed"`
+	SenderID                string  `json:"sender_iden"`
+	SenderEmail             string  `json:"sender_email"`
+	SenderEmailNormalized   string  `json:"sender_email_normalized"`
+	ReceiverID              string  `json:"receiver_iden"`
+	ReceiverEmail           string  `json:"receiver_email"`
+	ReceiverEmailNormalized string  `json:"receiver_email_normalized"`
 }
 
 //PushList describes a list of push messages
@@ -543,6 +552,16 @@ func (c *Client) GetPushHistory(modifiedAfter float32) ([]PushMessage, error) {
 		return pushList.Pushes, err
 	}
 	return pushList.Pushes, nil
+}
+
+//DeletePush deletes a push message
+func (c *Client) DeletePush(pushID string) error {
+	_, apiError, err := c.makeCall("DELETE", "pushes/"+pushID, nil)
+	if err != nil {
+		log.Println("Failed to delete push: ", apiError, err)
+		return err
+	}
+	return nil
 }
 
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
