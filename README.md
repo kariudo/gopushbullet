@@ -24,6 +24,7 @@ Many major features complete, see notes below. Additional tests need to be writt
    * File Uploads
 * Delete a push
 * Get push history
+* Dismiss push
 
 ### Devices
 * Get Devices
