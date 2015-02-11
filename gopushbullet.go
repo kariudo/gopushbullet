@@ -564,6 +564,17 @@ func (c *Client) DeletePush(pushID string) error {
 	return nil
 }
 
+//DismissPush allows for dismissal of a push message or updating a list push
+func (c *Client) DismissPush(ID) error {
+	_, apiError, err := c.makeCall("GET", "pushes/"+ID, nil)
+	if err != nil {
+		log.Println("Failed to dismiss push: ", apiError, err)
+		return err
+	}
+	return nil
+}
+
+//makeCall handles most http transactions under standard methods
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems OK
 	if len(c.APIKey) == 0 {
