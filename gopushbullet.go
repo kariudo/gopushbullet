@@ -585,6 +585,16 @@ func (c *Client) DismissPush(ID string) error {
 	return nil
 }
 
+//UpdateList allows for updating a list type push
+func (c *Client) UpdateList(pushID string, list ItemsList) error {
+	_, apiError, err := c.makeCall("POST", "pushes/"+pushID, list)
+	if err != nil {
+		log.Println("Failed to update list: ", apiError, err)
+		return err
+	}
+	return nil
+}
+
 //makeCall handles most http transactions under standard methods
 func (c *Client) makeCall(method string, call string, data interface{}) (responseBody []byte, apiError *Error, err error) {
 	// make sure API key seems OK
