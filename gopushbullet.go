@@ -81,6 +81,17 @@ type PushList struct {
 	Pushes []PushMessage `json:"pushes"`
 }
 
+//ItemsList describes a list of checklist items
+type ItemsList struct {
+	items []Item `json:"items"`
+}
+
+//Item describes a checklist item
+type Item struct {
+	Text    string `json:"text"`
+	Checked bool   `json:"checked"`
+}
+
 //Device describes a registered device (phone, stream).
 type Device struct {
 	ID           string  `json:"iden"`
