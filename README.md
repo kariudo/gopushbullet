@@ -25,6 +25,7 @@ Many major features complete, see notes below. Additional tests need to be writt
 * Delete a push
 * Get push history
 * Dismiss push
+* Update a push (update list items)
 
 ### Devices
 * Get Devices
@@ -43,4 +44,3 @@ Many major features complete, see notes below. Additional tests need to be writt
 ## Todo
 * Web Sockets
 * OAuth account access
-* Update a push (update list items)
