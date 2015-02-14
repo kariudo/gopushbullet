@@ -234,6 +234,83 @@ func TestSendLinkToClientID(t *testing.T) {
 	}
 }
 
+// Push - Address
+func TestSendAddressToAll(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddress("Build Test", "Place", "123 Main st., Newtown, CT")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendAddressFailurePaths(t *testing.T) {
+	mockServer, c := mockHTTP(401, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddressToTarget("channel", "testchannelpleaseignore", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err == nil {
+		t.Error(err)
+	}
+	mockServer, c = mockHTTP(401, "invalid json")
+	err = c.SendAddressToTarget("channel", "testchannelpleaseignore", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err == nil {
+		t.Error(err)
+	}
+}
+
+func TestSendAddressToDevice(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddressToTarget("device", "_deviceid_", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendAddressInvalidTarget(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddressToTarget("waffles", "bacon", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err == nil {
+		t.Error(err)
+	}
+}
+
+func TestSendAddressToChannel(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddressToTarget("channel", "testchannelpleaseignore", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendAddressToEmail(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddressToTarget("email", "kariudo@gmail.com", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendAddressToClientID(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendAddressToTarget("client", "_clientid_", "Build Test", "Place", "123 Main st., Newtown, CT")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+// Devices tests
 func TestGetDevices(t *testing.T) {
 	k, err := getKey()
 	if err != nil {
