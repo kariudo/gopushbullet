@@ -75,6 +75,8 @@ func TestErrorString(t *testing.T) {
 	}
 }
 
+// Push - Notes
+
 func TestSendNoteToAll(t *testing.T) {
 	// Use the following code in place of the mock calls to test on live api
 	// k, err := getKey()
@@ -151,6 +153,82 @@ func TestSendNoteToClientID(t *testing.T) {
 	defer mockServer.Close()
 
 	err := c.SendNoteToTarget("client", "_clientid_", "Build Test", "This is a test of gopushbullet's SendNote() function.")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+// Push - Links
+func TestSendLinkToAll(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLink("Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendLinkFailurePaths(t *testing.T) {
+	mockServer, c := mockHTTP(401, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLinkToTarget("channel", "testchannelpleaseignore", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err == nil {
+		t.Error(err)
+	}
+	mockServer, c = mockHTTP(401, "invalid json")
+	err = c.SendLinkToTarget("channel", "testchannelpleaseignore", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err == nil {
+		t.Error(err)
+	}
+}
+
+func TestSendLinkToDevice(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLinkToTarget("device", "_deviceid_", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendLinkInvalidTarget(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLinkToTarget("waffles", "bacon", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err == nil {
+		t.Error(err)
+	}
+}
+
+func TestSendLinkToChannel(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLinkToTarget("channel", "testchannelpleaseignore", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendLinkToEmail(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLinkToTarget("email", "kariudo@gmail.com", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendLinkToClientID(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendLinkToTarget("client", "_clientid_", "Build Test", "This is a test of gopushbullet's SendLink() function.", "http://example.com")
 	if err != nil {
 		t.Error(err)
 	}
