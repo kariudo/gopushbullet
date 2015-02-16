@@ -75,6 +75,20 @@ func TestErrorString(t *testing.T) {
 	}
 }
 
+// Devices tests
+func TestGetDevices(t *testing.T) {
+	k, err := getKey()
+	if err != nil {
+		t.Error("Failed to get key")
+	}
+	c := ClientWithKey(k)
+	d, err := c.GetDevices()
+	if err != nil {
+		t.Error("Failed to get devices: ", err)
+	}
+	fmt.Println(d)
+}
+
 // Push - Notes
 
 func TestSendNoteToAll(t *testing.T) {
@@ -305,21 +319,85 @@ func TestSendAddressToClientID(t *testing.T) {
 	defer mockServer.Close()
 
 	err := c.SendAddressToTarget("client", "_clientid_", "Build Test", "Place", "123 Main st., Newtown, CT")
+
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-// Devices tests
-func TestGetDevices(t *testing.T) {
-	k, err := getKey()
+// Push - Checklist
+func TestSendChecklistToAll(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklist("Build Test", []string{"item1", "item2", "item3"})
 	if err != nil {
-		t.Error("Failed to get key")
+		t.Error(err)
 	}
-	c := ClientWithKey(k)
-	d, err := c.GetDevices()
+}
+
+func TestSendChecklistFailurePaths(t *testing.T) {
+	mockServer, c := mockHTTP(401, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklistToTarget("channel", "testchannelpleaseignore", "Build Test", []string{"item1", "item2", "item3"})
+	if err == nil {
+		t.Error(err)
+	}
+	mockServer, c = mockHTTP(401, "invalid json")
+	err = c.SendChecklistToTarget("channel", "testchannelpleaseignore", "Build Test", []string{"item1", "item2", "item3"})
+	if err == nil {
+		t.Error(err)
+	}
+}
+
+func TestSendChecklistToDevice(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklistToTarget("device", "_deviceid_", "Build Test", []string{"item1", "item2", "item3"})
 	if err != nil {
-		t.Error("Failed to get devices: ", err)
+		t.Error(err)
 	}
-	fmt.Println(d)
+}
+
+func TestSendChecklistInvalidTarget(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklistToTarget("waffles", "bacon", "Build Test", []string{"item1", "item2", "item3"})
+	if err == nil {
+		t.Error(err)
+	}
+}
+
+func TestSendChecklistToChannel(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklistToTarget("channel", "testchannelpleaseignore", "Build Test", []string{"item1", "item2", "item3"})
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendChecklistToEmail(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklistToTarget("email", "kariudo@gmail.com", "Build Test", []string{"item1", "item2", "item3"})
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSendChecklistToClientID(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+
+	err := c.SendChecklistToTarget("client", "_clientid_", "Build Test", []string{"item1", "item2", "item3"})
+
+	if err != nil {
+		t.Error(err)
+	}
 }
