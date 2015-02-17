@@ -401,3 +401,32 @@ func TestSendChecklistToClientID(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+// Contacts
+func TestGetContacts(t *testing.T) {
+	contactJson := `{
+			 "contacts": [
+				{
+				  "iden": "ubdcjAfszs0Smi",
+				  "name": "Ryan Oldenburg",
+				  "created": 13990116604298899,
+				  "modified": 139901166042976,
+				  "email": "ryanjoldenburg@gmail.com",
+				  "email_normalized": "ryanjoldenburg@gmail.com",
+				  "active": true
+				}
+			]
+		}`
+	mockServer, c := mockHTTP(200, contactJson)
+	defer mockServer.Close()
+
+	contacts, err := c.GetContacts()
+	if err != nil {
+		t.Error(contacts, err)
+	}
+
+	if contacts.Contacts[0].Name != "Ryan Oldenburg" {
+		t.Error("Contact name not as expected:", contacts.Contacts[0].Name)
+	}
+
+}
