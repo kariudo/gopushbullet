@@ -575,7 +575,7 @@ func (c *Client) DeletePush(pushID string) error {
 	return nil
 }
 
-//DismissPush allows for dismissal of a push message or updating a list push
+//DismissPush allows for dismissal of a push message
 func (c *Client) DismissPush(ID string) error {
 	_, apiError, err := c.makeCall("GET", "pushes/"+ID, nil)
 	if err != nil {
