@@ -410,7 +410,7 @@ func TestGetContacts(t *testing.T) {
 				"iden": "ubdcjAfszs0Smi",
 				"name": "Ryan Oldenburg",
 				"created": 13990116604298899,
-				""modified": 139901166042976,
+				"modified": 139901166042976,
 				"email": "ryanjoldenburg@gmail.com",
 				"email_normalized": "ryanjoldenburg@gmail.com",
 				"active": true
