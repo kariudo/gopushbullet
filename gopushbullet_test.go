@@ -405,15 +405,15 @@ func TestSendChecklistToClientID(t *testing.T) {
 // Contacts
 func TestGetContacts(t *testing.T) {
 	contactJson := `{
-			 "contacts": [
+			"contacts": [
 				{
-				  "iden": "ubdcjAfszs0Smi",
-				  "name": "Ryan Oldenburg",
-				  "created": 13990116604298899,
-				  "modified": 139901166042976,
-				  "email": "ryanjoldenburg@gmail.com",
-				  "email_normalized": "ryanjoldenburg@gmail.com",
-				  "active": true
+				"iden": "ubdcjAfszs0Smi",
+				"name": "Ryan Oldenburg",
+				"created": 13990116604298899,
+				""modified": 139901166042976,
+				"email": "ryanjoldenburg@gmail.com",
+				"email_normalized": "ryanjoldenburg@gmail.com",
+				"active": true
 				}
 			]
 		}`
