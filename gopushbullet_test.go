@@ -430,3 +430,13 @@ func TestGetContacts(t *testing.T) {
 	}
 
 }
+
+// Update and Delete Push
+func TestDeletePush(t *testing.T) {
+	mockServer, c := mockHTTP(200, "{}")
+	defer mockServer.Close()
+	err := c.DeletePush("pushid")
+	if err != nil {
+		t.Error("Failure calling DeletePush:", err)
+	}
+}
